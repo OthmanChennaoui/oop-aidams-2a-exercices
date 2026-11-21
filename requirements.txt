@@ -1,0 +1,5 @@
+pytest>=8
+pytest-mock>=3.12
+pytest-cov>=5
+# optionnel, uniquement pour le test réel `pytest -m slow`
+# groq
