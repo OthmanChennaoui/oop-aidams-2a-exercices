@@ -17,6 +17,10 @@ pythonpath = [
     "06_testing",
 ]
 addopts = "-m 'not slow'"
+filterwarnings = [
+    # Starlette's TestClient still works with httpx; it only nudges towards httpx2.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
 markers = [
     "slow: slow tests / real network calls (pytest -m slow)",
 ]
