@@ -1,6 +1,6 @@
 # 06 - Testing & QA
 
-Course: <https://courses.dallard.tech/ci_cd/testing_python_intro/>
+Course: <https://courses.dallard.tech/ci_cd/testing_python_intro/> (slides 89-93)
 
 | File | Role |
 |---|---|

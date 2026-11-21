@@ -1,6 +1,6 @@
 # 05 - Design patterns in practice
 
-Exercises:
+Exercises (slide 84, patterns presented on slides 77-83):
 [creational](https://courses.dallard.tech/sys_design/creational_pattern/) ·
 [structural](https://courses.dallard.tech/sys_design/structural_pattern/) ·
 [behavioral](https://courses.dallard.tech/sys_design/behavioral_pattern/)

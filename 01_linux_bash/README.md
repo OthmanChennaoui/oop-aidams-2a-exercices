@@ -1,6 +1,6 @@
 # 01 - Bash script exercise
 
-Exercise: <https://courses.dallard.tech/linux/bash_exo/>
+Exercise: <https://courses.dallard.tech/linux/bash_exo/> (slide 18)
 
 ## Part 1 - Improve your shell experience
 
