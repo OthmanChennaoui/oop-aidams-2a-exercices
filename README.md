@@ -11,7 +11,7 @@ Course resources: <https://courses.dallard.tech/>
 | 3 | OOP | Operator overloading & inheritance | 67 | [`03_oop`](03_oop) |
 | 4 | UML | Hospital Management System & ABCD Records (diagrams + code) | 68 | [`04_uml`](04_uml) |
 | 5 | Design patterns | Factory, Builder, Singleton, Adapter, Decorator, Strategy, Template Method | 77-87 | [`05_design_patterns`](05_design_patterns) |
-| 6 | Testing & QA | Unit tests, integration tests, mocking (Groq), fixtures, markers, coverage | 89-93 | [`06_testing`](06_testing) + [`tests`](tests) |
+| 6 | Testing & QA | Unit tests, integration tests, mocking (Groq), FastAPI REST API, fixtures, markers, coverage | 40, 89-93 | [`06_testing`](06_testing) + [`tests`](tests) |
 
 ## Running the project
 
@@ -23,9 +23,13 @@ pip install -r requirements.txt
 pytest                                   # whole test suite
 pytest --cov --cov-report=term-missing   # with coverage
 python 05_design_patterns/structural/decorator.py   # run one exercise
+uvicorn api:app --reload --app-dir 06_testing      # start the FastAPI app
 ```
 
 The UML diagrams are written in Mermaid and are rendered directly by GitHub.
+
+Each piece of work is developed on its own branch and merged into `main`
+(see `git log --graph --oneline`), as recommended in the Git part of the course.
 
 ## Structure
 
@@ -39,7 +43,7 @@ The UML diagrams are written in Mermaid and are rendered directly by GitHub.
 │   ├── creational/       factory.py, builder.py, singleton.py (+ config.json)
 │   ├── structural/       adapter.py, decorator.py
 │   └── behavioral/       strategy.py, template_method.py
-├── 06_testing/           app.py, groq_chat.py
+├── 06_testing/           app.py, groq_chat.py, api.py (FastAPI)
 ├── tests/                conftest.py + one test file per part
 ├── pyproject.toml        pytest / coverage config
 ├── tox.ini               multi-version testing (py311, py312)
