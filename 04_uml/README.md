@@ -1,6 +1,6 @@
 # 04 - UML practice
 
-Exercise: <https://gist.github.com/bdallard/2d2407c4de4c182afca6d3ec7235e9eb>
+Exercise: <https://gist.github.com/bdallard/2d2407c4de4c182afca6d3ec7235e9eb> (slide 68)
 
 The diagrams are written in [Mermaid](https://mermaid.js.org/): GitHub renders
 them as images directly inside the `.md` files.

@@ -4,14 +4,14 @@ Solutions to the practical exercises of the *Object Oriented Programming &
 Design pattern in Python* course (B. Dallard, CentraleSupélec).
 Course resources: <https://courses.dallard.tech/>
 
-| # | Course part | Exercise | Folder |
-|---|---|---|---|
-| 1 | Linux & shell | Set up a development environment (`env_install.sh`) | [`01_linux_bash`](01_linux_bash) |
-| 2 | GitHub | Git mini exo (commands + answers + `install.sh`) | [`02_git`](02_git) |
-| 3 | OOP | Operator overloading & inheritance | [`03_oop`](03_oop) |
-| 4 | UML | Hospital Management System & ABCD Records (diagrams + code) | [`04_uml`](04_uml) |
-| 5 | Design patterns | Factory, Builder, Singleton, Adapter, Decorator, Strategy, Template Method | [`05_design_patterns`](05_design_patterns) |
-| 6 | Testing & QA | Unit tests, integration tests, mocking (Groq), fixtures, markers, coverage | [`06_testing`](06_testing) + [`tests`](tests) |
+| # | Course part | Exercise | Slides | Folder |
+|---|---|---|---|---|
+| 1 | Linux & shell | Set up a development environment (`env_install.sh`) | 18 | [`01_linux_bash`](01_linux_bash) |
+| 2 | GitHub | Git mini exo (commands + answers + `install.sh`) | 26 | [`02_git`](02_git) |
+| 3 | OOP | Operator overloading & inheritance | 67 | [`03_oop`](03_oop) |
+| 4 | UML | Hospital Management System & ABCD Records (diagrams + code) | 68 | [`04_uml`](04_uml) |
+| 5 | Design patterns | Factory, Builder, Singleton, Adapter, Decorator, Strategy, Template Method | 77-87 | [`05_design_patterns`](05_design_patterns) |
+| 6 | Testing & QA | Unit tests, integration tests, mocking (Groq), fixtures, markers, coverage | 89-93 | [`06_testing`](06_testing) + [`tests`](tests) |
 
 ## Running the project
 

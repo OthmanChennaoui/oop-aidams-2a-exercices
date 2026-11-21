@@ -1,6 +1,6 @@
 # 03 - OOP Problems
 
-Exercise: <https://gist.github.com/bdallard/b2f2c910e3a9b564a30c86991c97b4fc>
+Exercise: <https://gist.github.com/bdallard/b2f2c910e3a9b564a30c86991c97b4fc> (slide 67)
 
 | File | Content |
 |---|---|

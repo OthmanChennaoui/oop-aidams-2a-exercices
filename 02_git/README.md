@@ -1,6 +1,6 @@
 # 02 - Git mini exo
 
-Exercise: <https://gist.github.com/bdallard/8bdbdd70f234f94823c0c2cde9515388>
+Exercise: <https://gist.github.com/bdallard/8bdbdd70f234f94823c0c2cde9515388> (slide 26)
 
 ## Part 1 - Setup & config
 
