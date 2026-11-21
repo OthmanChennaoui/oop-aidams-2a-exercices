@@ -1,47 +1,47 @@
-# OOP & Design patterns in Python - exercices (AIDAMS 2A)
+# OOP & Design patterns in Python - exercises (AIDAMS 2A)
 
-Solutions des exercices pratiques du cours *Object Oriented Programming &
-Design pattern in Python* (B. Dallard, CentraleSupélec).
-Ressources du cours : <https://courses.dallard.tech/>
+Solutions to the practical exercises of the *Object Oriented Programming &
+Design pattern in Python* course (B. Dallard, CentraleSupélec).
+Course resources: <https://courses.dallard.tech/>
 
-| # | Partie du cours | Exercice | Dossier |
+| # | Course part | Exercise | Folder |
 |---|---|---|---|
-| 1 | Linux & shell | Configurer un environnement de dev (`env_install.sh`) | [`01_linux_bash`](01_linux_bash) |
-| 2 | GitHub | Git mini exo (commandes + réponses + `install.sh`) | [`02_git`](02_git) |
+| 1 | Linux & shell | Set up a development environment (`env_install.sh`) | [`01_linux_bash`](01_linux_bash) |
+| 2 | GitHub | Git mini exo (commands + answers + `install.sh`) | [`02_git`](02_git) |
 | 3 | OOP | Operator overloading & inheritance | [`03_oop`](03_oop) |
-| 4 | UML | Hospital Management System & ABCD Records (diagrammes + code) | [`04_uml`](04_uml) |
+| 4 | UML | Hospital Management System & ABCD Records (diagrams + code) | [`04_uml`](04_uml) |
 | 5 | Design patterns | Factory, Builder, Singleton, Adapter, Decorator, Strategy, Template Method | [`05_design_patterns`](05_design_patterns) |
-| 6 | Testing & QA | Tests unitaires, intégration, mocking (Groq), fixtures, markers, coverage | [`06_testing`](06_testing) + [`tests`](tests) |
+| 6 | Testing & QA | Unit tests, integration tests, mocking (Groq), fixtures, markers, coverage | [`06_testing`](06_testing) + [`tests`](tests) |
 
-## Lancer le projet
+## Running the project
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-pytest                                   # toute la suite de tests
-pytest --cov --cov-report=term-missing   # avec la couverture
-python 05_design_patterns/structural/decorator.py   # lancer un exercice
+pytest                                   # whole test suite
+pytest --cov --cov-report=term-missing   # with coverage
+python 05_design_patterns/structural/decorator.py   # run one exercise
 ```
 
-Les diagrammes UML sont écrits en Mermaid et s'affichent directement sur GitHub.
+The UML diagrams are written in Mermaid and are rendered directly by GitHub.
 
 ## Structure
 
 ```
 .
-├── 01_linux_bash/        env_install.sh + réponses
-├── 02_git/               réponses au Git mini exo + install.sh
+├── 01_linux_bash/        env_install.sh + answers
+├── 02_git/               Git mini exo answers + install.sh
 ├── 03_oop/               operator_overloading.py, inheritance.py
-├── 04_uml/               *_uml.md (diagrammes) + hospital.py, abcd_records.py
+├── 04_uml/               *_uml.md (diagrams) + hospital.py, abcd_records.py
 ├── 05_design_patterns/
 │   ├── creational/       factory.py, builder.py, singleton.py (+ config.json)
 │   ├── structural/       adapter.py, decorator.py
 │   └── behavioral/       strategy.py, template_method.py
 ├── 06_testing/           app.py, groq_chat.py
-├── tests/                conftest.py + un fichier de tests par partie
-├── pyproject.toml        config pytest / coverage
-├── tox.ini               tests multi-versions (py311, py312)
+├── tests/                conftest.py + one test file per part
+├── pyproject.toml        pytest / coverage config
+├── tox.ini               multi-version testing (py311, py312)
 └── requirements.txt
 ```

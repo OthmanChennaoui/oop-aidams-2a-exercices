@@ -96,7 +96,7 @@ def test_royal_member_scenario(shop):
     assert order.status is abcd.OrderStatus.PARTIALLY_SHIPPED
     assert [l.backordered for l in order.lines] == [False, True]
     assert cd1.stock == 4
-    assert order.total() == 27.0  # 30 € - 10 %
+    assert order.total() == 27.0  # 30 EUR - 10%
     assert [l.item for l in order.shipping_list.lines] == [cd1]
     assert records.orders == [order]
 
@@ -124,7 +124,7 @@ def test_payment_must_match_invoice(shop):
     order = abcd.Order(abcd.RegularMember(7, "Bob", "Lyon"))
     order.add_item(cd1)
     with pytest.raises(ValueError):
-        abcd.CollectionDeptClerk.collect(order, abcd.Cash(15.0))  # pas encore traitée
+        abcd.CollectionDeptClerk.collect(order, abcd.Cash(15.0))  # not processed yet
     clerk.process_order(order)
     with pytest.raises(ValueError):
         abcd.CollectionDeptClerk.collect(order, abcd.BankDraft(1.0, "BNP"))

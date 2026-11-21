@@ -1,9 +1,9 @@
 # Exo 1 - Hospital Management System 🏥
 
-Énoncé : <https://gist.github.com/bdallard/2d2407c4de4c182afca6d3ec7235e9eb>
-Implémentation Python : [`hospital.py`](hospital.py)
+Exercise: <https://gist.github.com/bdallard/2d2407c4de4c182afca6d3ec7235e9eb>
+Python implementation: [`hospital.py`](hospital.py)
 
-## Task 1 - Diagramme de classes de base
+## Task 1 - Basic class diagram
 
 ```mermaid
 classDiagram
@@ -34,16 +34,16 @@ classDiagram
         +receive_payment(amount)
     }
 
-    Patient "1..*" -- "1" Organizer : soumet ses problèmes à
-    Organizer "1" -- "1..*" Doctor : consulte
-    Organizer "1" -- "0..*" Patient : envoie prescriptions / gère comptes
+    Patient "1..*" -- "1" Organizer : submits problems to
+    Organizer "1" -- "1..*" Doctor : consults
+    Organizer "1" -- "0..*" Patient : sends prescriptions / manages accounts
 ```
 
-## Task 2 - Diagramme complet (6 classes)
+## Task 2 - Complete diagram (6 classes)
 
-- **Composition** `Patient *-- HealthProblem` : un problème n'existe pas sans son patient.
-- **Composition** `HealthProblem *-- Prescription` : la prescription répond à un problème.
-- **Inheritance** pour les moyens de paiement (`Payment` abstrait → `Check`, `Cash`, `CreditCard`).
+- **Composition** `Patient *-- HealthProblem`: a problem cannot exist without its patient.
+- **Composition** `HealthProblem *-- Prescription`: a prescription answers one problem.
+- **Inheritance** for the payment methods (abstract `Payment` → `Check`, `Cash`, `CreditCard`).
 
 ```mermaid
 classDiagram
@@ -97,17 +97,17 @@ classDiagram
         +process() str
     }
 
-    Patient "1" *-- "0..*" HealthProblem : poste
-    HealthProblem "1" *-- "0..1" Prescription : reçoit
-    Doctor "1" --> "0..*" Prescription : rédige
-    Organizer "1" --> "0..*" HealthProblem : traite
-    Prescription "1" -- "0..1" Payment : réglée par
+    Patient "1" *-- "0..*" HealthProblem : posts
+    HealthProblem "1" *-- "0..1" Prescription : receives
+    Doctor "1" --> "0..*" Prescription : writes
+    Organizer "1" --> "0..*" HealthProblem : handles
+    Prescription "1" -- "0..1" Payment : paid by
     Payment <|-- Check
     Payment <|-- Cash
     Payment <|-- CreditCard
 ```
 
-### Séquence : un patient soumet un problème, reçoit une prescription et paie
+### Sequence: a patient submits a problem, receives a prescription and pays
 
 ```mermaid
 sequenceDiagram
@@ -132,11 +132,11 @@ sequenceDiagram
     deactivate O
 ```
 
-## Task 3 - Version avancée
+## Task 3 - Advanced version
 
-Ajouts : superclasse `User` (id, name, password, login/logout), statut
-`ProblemStatus` (PENDING → IN_REVIEW → RESOLVED), timestamps, historique des
-prescriptions, paiement modélisé par **polymorphisme (pattern Strategy)**.
+Additions: a `User` superclass (id, name, password, login/logout), a
+`ProblemStatus` (PENDING → IN_REVIEW → RESOLVED), timestamps, prescription
+history, and payment modelled with **polymorphism (Strategy pattern)**.
 
 ```mermaid
 classDiagram
@@ -205,8 +205,8 @@ classDiagram
     User <|-- Organizer
     Patient "1" *-- "0..*" HealthProblem
     HealthProblem --> ProblemStatus
-    HealthProblem "0..*" --> "0..1" Doctor : assigné à
-    HealthProblem "1" *-- "0..*" Prescription : historique
+    HealthProblem "0..*" --> "0..1" Doctor : assigned to
+    HealthProblem "1" *-- "0..*" Prescription : history
     Prescription "1" -- "0..1" Payment
     Payment o-- PaymentMethod
     PaymentMethod <|.. CheckPayment
@@ -223,7 +223,7 @@ sequenceDiagram
     O->>S: register_member("Patient", name, password)
     S->>S: generate member id + hash password
     S-->>O: Patient(id)
-    O-->>O: communique id + mot de passe au patient
+    O-->>O: gives the id + password to the patient
 ```
 
 ### SSD 2 - Consultation Flow
@@ -263,27 +263,27 @@ sequenceDiagram
 
 ## Questions to consider
 
-1. **Patient qui consulte plusieurs médecins ?** Chaque `HealthProblem` porte
-   sa propre référence `doctor` : un patient a plusieurs problèmes, chacun
-   pouvant être assigné à un médecin différent (relation `Patient 1 -- * HealthProblem * -- 0..1 Doctor`).
-   Pour un même problème vu par plusieurs médecins, on remplace l'attribut par
-   une liste de `Consultation(doctor, date, notes)`.
-2. **Prescriptions réutilisables ?** Oui pour un traitement renouvelable : on
-   garde l'historique (`HealthProblem *-- Prescription`) et on ajoute une
-   méthode `renew()` qui crée une nouvelle `Prescription` liée à l'originale
-   (`renewed_from`), plutôt que de modifier l'ancienne (traçabilité).
-3. **Pattern pour le paiement ?** **Strategy** : `PaymentMethod` est
-   l'interface, `CheckPayment` / `CashPayment` / `CreditCardPayment` sont les
-   stratégies interchangeables. Une **Factory** peut créer la bonne stratégie
-   à partir du choix du patient.
-4. **Intégrité des paiements ?** Transaction atomique (le paiement et le
-   marquage `paid` réussissent ou échouent ensemble), interdiction du double
-   paiement (`if prescription.paid: raise`), idempotence via un id de
-   transaction, journal d'audit, montants vérifiés côté serveur,
-   `forward_payment` impossible deux fois (`forwarded`).
+1. **A patient consulting several doctors?** Each `HealthProblem` holds its
+   own `doctor` reference: a patient has several problems, and each one can be
+   assigned to a different doctor (`Patient 1 -- * HealthProblem * -- 0..1 Doctor`).
+   For one problem seen by several doctors, replace the attribute with a list
+   of `Consultation(doctor, date, notes)`.
+2. **Should prescriptions be reusable?** Yes for a renewable treatment: keep
+   the history (`HealthProblem *-- Prescription`) and add a `renew()` method
+   that creates a new `Prescription` linked to the original one
+   (`renewed_from`), rather than modifying the old one (traceability).
+3. **Which pattern fits the payment system?** **Strategy**: `PaymentMethod` is
+   the interface, `CheckPayment` / `CashPayment` / `CreditCardPayment` are
+   interchangeable strategies. A **Factory** can create the right strategy
+   from the patient's choice.
+4. **Data integrity when payments are processed?** An atomic transaction (the
+   payment and the `paid` flag succeed or fail together), no double payment
+   (`if prescription.paid: raise`), idempotency through a transaction id, an
+   audit log, amounts checked server-side, and `forward_payment` impossible
+   twice (`forwarded`).
 
 ---
 
 ## Exo 2 - ABCD Records
 
-Voir [`abcd_records_uml.md`](abcd_records_uml.md).
+See [`abcd_records_uml.md`](abcd_records_uml.md).

@@ -1,6 +1,6 @@
-"""Exo 1 - Hospital Management System : implémentation de la Task 3.
+"""Exo 1 - Hospital Management System: implementation of Task 3.
 
-Le diagramme correspondant est dans hospital_uml.md.
+The matching diagrams are in hospital_uml.md.
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ class Doctor(User):
 
 
 class Organizer(User):
-    """Coordonne le workflow et joue le rôle d'administrateur."""
+    """Coordinates the workflow and also acts as administrator."""
 
     def __init__(self, name: str, password: str) -> None:
         super().__init__(name, password)
@@ -147,7 +147,7 @@ class HealthProblem:
 class PaymentMethod(ABC):
     @abstractmethod
     def pay(self, amount: float) -> str:
-        """Encaisse `amount` et renvoie un reçu."""
+        """Collect `amount` and return a receipt."""
 
 
 class CheckPayment(PaymentMethod):

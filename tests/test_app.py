@@ -1,4 +1,4 @@
-"""Tests unitaires : une fonction à la fois, en isolation."""
+"""Unit tests: one function at a time, in isolation."""
 
 import pytest
 

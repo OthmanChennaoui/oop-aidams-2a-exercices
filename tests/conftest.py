@@ -1,4 +1,4 @@
-"""Fixtures partagées entre tous les fichiers de tests."""
+"""Fixtures shared by every test file."""
 
 import pytest
 
@@ -23,7 +23,7 @@ def report_data():
 
 @pytest.fixture
 def fresh_config():
-    """Chaque test repart d'un Singleton vierge."""
+    """Each test starts from a fresh Singleton."""
     ConfigManager.reset()
     yield ConfigManager.get_instance()
     ConfigManager.reset()
@@ -31,13 +31,13 @@ def fresh_config():
 
 @pytest.fixture(autouse=True)
 def no_pipeline_delay(monkeypatch):
-    """Les pipelines ETL simulent de la latence : inutile dans les tests."""
+    """The ETL pipelines simulate latency: useless in tests."""
     monkeypatch.setattr(template_method.DataPipeline, "io_delay", 0)
 
 
 @pytest.fixture
 def fake_groq_client(mocker):
-    """Faux client Groq dont la réponse a la même forme que la vraie."""
+    """Fake Groq client whose response has the same shape as the real one."""
     mock_choice = mocker.Mock()
     mock_choice.message.content = "4"
     mock_response = mocker.Mock()

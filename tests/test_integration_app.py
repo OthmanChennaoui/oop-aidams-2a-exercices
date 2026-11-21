@@ -1,4 +1,4 @@
-"""Tests d'intégration : OrderService + ProductRepository + fonctions de calcul."""
+"""Integration tests: OrderService + ProductRepository + calculation functions."""
 
 
 class TestIntegrationOrderService:

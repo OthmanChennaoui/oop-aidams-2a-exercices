@@ -169,7 +169,7 @@ class TestDecorator:
         order = deco.GiftWrapDecorator(order)
         order = deco.DiscountDecorator(order, percent=15)
         order = deco.PremiumMemberDecorator(order)
-        # même résultat que le code legacy : (100+15+5+5) * 0.85 * 0.90
+        # same result as the legacy code: (100+15+5+5) * 0.85 * 0.90
         assert order.get_cost() == pytest.approx(95.625)
         lines = order.get_description().splitlines()
         assert lines[0].startswith("Base price") and lines[-1].startswith("Premium member")
@@ -231,7 +231,7 @@ class TestTemplateMethod:
     def test_pipelines_run(self, cls, name):
         p = cls("src")
         assert p.run() == f"{name} Pipeline finished"
-        assert p.data is None  # cleanup effectué
+        assert p.data is None  # cleanup was done
         steps = [line for line in p.log if line.startswith(("Connecting", "Validating", "Loading", "Cleaning"))]
         assert [s.split()[0] for s in steps] == ["Connecting", "Validating", "Loading", "Cleaning"]
 
@@ -245,7 +245,7 @@ class TestTemplateMethod:
     def test_validation_failure_still_cleans_up(self):
         class BrokenPipeline(tm.CSVPipeline):
             def extract(self):
-                return [{"id": 1}]  # pas de "name"
+                return [{"id": 1}]  # no "name"
 
             def transform(self, data):
                 return data

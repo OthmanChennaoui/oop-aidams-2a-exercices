@@ -1,20 +1,20 @@
-"""Strategy - refactoring du générateur de rapports multi-formats.
+"""Strategy - refactoring the multi-format report generator.
 
-Problèmes identifiés dans le code legacy :
-  1. Ajouter un format (XML, Markdown...) = modifier generate_report ET
-     save_report : violation de l'Open/Closed Principle.
-  2. Deux chaînes if/elif parallèles qui doivent rester synchronisées
-     (le format et son extension de fichier).
-  3. Impossible de tester un format isolément : tout est dans une méthode.
-  4. Le format est un simple str passé à chaque appel : aucune vérification,
-     "Unknown format" renvoyé silencieusement.
-  5. Duplication : la boucle sur les données et l'écriture du fichier sont
-     répétées pour chaque format.
+Problems found in the legacy code:
+  1. Adding a format (XML, Markdown...) = modifying generate_report AND
+     save_report: violates the Open/Closed Principle.
+  2. Two parallel if/elif chains that must stay in sync
+     (the format and its file extension).
+  3. A format cannot be tested on its own: everything lives in one method.
+  4. The format is a plain str passed on every call: no checks at all,
+     "Unknown format" is returned silently.
+  5. Duplication: the loop over the data and the file writing are repeated
+     for every format.
 
-Solution :
-  - ReportFormatStrategy (interface) : format() + extension
-  - une stratégie concrète par format
-  - ReportGenerator (contexte) : set_strategy() pour changer à l'exécution
+Solution:
+  - ReportFormatStrategy (interface): format() + extension
+  - one concrete strategy per format
+  - ReportGenerator (context): set_strategy() to switch at runtime
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ class JSONFormatStrategy(ReportFormatStrategy):
         return json.dumps(data, indent=2)
 
 
-# Test final de l'exo : nouveau format SANS modifier les classes existantes.
+# Final test of the exercise: a new format WITHOUT modifying the existing classes.
 class HTMLFormatStrategy(ReportFormatStrategy):
     extension = ".html"
 
@@ -77,7 +77,7 @@ class HTMLFormatStrategy(ReportFormatStrategy):
 
 
 class ReportGenerator:
-    """Le contexte : il ne connaît que l'interface ReportFormatStrategy."""
+    """The context: it only knows the ReportFormatStrategy interface."""
 
     def __init__(self, data: list[dict], strategy: ReportFormatStrategy | None = None) -> None:
         self.data = data

@@ -1,6 +1,6 @@
 """OOP Problems - Inheritance.
 
-Énoncé : https://gist.github.com/bdallard/b2f2c910e3a9b564a30c86991c97b4fc
+Exercise: https://gist.github.com/bdallard/b2f2c910e3a9b564a30c86991c97b4fc
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ class BankAccount:
         if balance < 0:
             raise ValueError("initial balance cannot be negative")
         self.account_number = account_number
-        self._balance = balance  # "protected" : on passe par les méthodes
+        self._balance = balance  # "protected": access it through the methods
 
     @property
     def balance(self) -> float:
@@ -76,7 +76,7 @@ class BankAccount:
         return self._balance
 
     def withdraw(self, amount: float) -> bool:
-        """Retire `amount`. Renvoie False (sans rien modifier) si le solde est insuffisant."""
+        """Withdraw `amount`. Return False (changing nothing) if the balance is too low."""
         if amount <= 0:
             raise ValueError("withdraw amount must be positive")
         if amount > self._balance:
@@ -85,7 +85,7 @@ class BankAccount:
         return True
 
     def transfer(self, destination: BankAccount, amount: float) -> bool:
-        """Transfère vers `destination`. False si solde insuffisant, True sinon."""
+        """Transfer to `destination`. False if the balance is too low, True otherwise."""
         if not self.withdraw(amount):
             return False
         destination.deposit(amount)
@@ -103,7 +103,7 @@ class SavingsAccount(BankAccount):
         self.interest_rate = interest_rate
 
     def add_interest(self) -> float:
-        """Crédite les intérêts et renvoie leur montant."""
+        """Credit the interest and return its amount."""
         interest = self._balance * self.interest_rate
         self._balance += interest
         return interest

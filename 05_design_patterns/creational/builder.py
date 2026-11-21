@@ -1,15 +1,15 @@
-"""Builder - refactoring du système d'onboarding RH.
+"""Builder - refactoring the HR employee onboarding system.
 
-Problème du code legacy : `create_employee` prend 17 paramètres positionnels
-(telescoping constructor). Un `None` oublié décale tous les arguments, les
-`False, True, True` sont illisibles et aucune règle métier n'est garantie
-(ex. : un Senior Developer devrait toujours avoir les droits admin).
+Problem with the legacy code: `create_employee` takes 17 positional parameters
+(telescoping constructor). One forgotten `None` shifts every following
+argument, `False, True, True` is unreadable and no business rule is enforced
+(e.g. a Senior Developer should always get admin rights).
 
-Solution :
-  - Employee : le produit (dataclass)
-  - EmployeeBuilder : méthodes chaînables `with_...()` qui renvoient self,
-    validation centralisée dans build()
-  - DeveloperBuilder / InternBuilder : presets métier
+Solution:
+  - Employee: the product (dataclass)
+  - EmployeeBuilder: chainable `with_...()` methods returning self,
+    validation centralised in build()
+  - DeveloperBuilder / InternBuilder: business presets
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ class EmployeeBuilder:
     def __init__(self) -> None:
         self._fields: dict = {"start_date": date.today().isoformat()}
 
-    # --- étapes de construction (chaînables) ---
+    # --- construction steps (chainable) ---
     def with_name(self, first_name: str, last_name: str) -> EmployeeBuilder:
         self._fields.update(first_name=first_name, last_name=last_name)
         return self
@@ -90,7 +90,7 @@ class EmployeeBuilder:
         self._fields["contract_type"] = contract_type
         return self
 
-    # --- produit final + validation centralisée ---
+    # --- final product + centralised validation ---
     def build(self) -> Employee:
         f = self._fields
         if not f.get("first_name") or not f.get("last_name"):
@@ -105,7 +105,7 @@ class EmployeeBuilder:
 
 
 class DeveloperBuilder(EmployeeBuilder):
-    """Preset : développeur avec laptop, VPN et droits admin."""
+    """Preset: developer with a laptop, VPN and admin rights."""
 
     def __init__(self, first_name: str, last_name: str, email: str, salary: float = 75000) -> None:
         super().__init__()
@@ -120,7 +120,7 @@ class DeveloperBuilder(EmployeeBuilder):
 
 
 class InternBuilder(EmployeeBuilder):
-    """Preset : stagiaire avec laptop, sans accès sensibles."""
+    """Preset: intern with a laptop and no sensitive access."""
 
     def __init__(self, first_name: str, last_name: str, email: str, department: str, manager_id: int) -> None:
         super().__init__()

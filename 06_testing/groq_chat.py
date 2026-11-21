@@ -1,8 +1,8 @@
-"""Appel à l'API Groq — le client est injectable pour pouvoir le mocker.
+"""Call to the Groq API - the client is injectable so that it can be mocked.
 
-`groq` n'est importé que si aucun client n'est fourni : les tests (qui
-passent un faux client) n'ont donc besoin ni du paquet, ni d'une clé API,
-ni d'internet.
+`groq` is only imported when no client is given: the tests (which pass a
+fake client) therefore need neither the package, nor an API key, nor
+internet access.
 """
 
 from __future__ import annotations
@@ -19,9 +19,9 @@ def ask_groq(question: str, client: Any = None) -> str:
         raise ValueError("Question cannot be empty")
 
     if client is None:
-        from groq import Groq  # import paresseux : pip install groq
+        from groq import Groq  # lazy import: pip install groq
 
-        client = Groq()  # lit GROQ_API_KEY dans l'environnement
+        client = Groq()  # reads GROQ_API_KEY from the environment
 
     response = client.chat.completions.create(
         model=MODEL,

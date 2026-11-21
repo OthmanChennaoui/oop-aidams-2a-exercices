@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# env_install.sh - configure un environnement de développement Python
+# env_install.sh - sets up a Python development environment
 #
-# Fonctionnalités demandées (Part 3 de l'exo) :
-#   1. fonction pretty_print (printf + lignes vides)
-#   2. détection de l'OS via $OSTYPE
-#   3. vérification / installation de python3
-#   4. vérification de pip
-#   5. installation de Jupyter Notebook
-#   6. sur macOS : `brew doctor`
+# Required features (Part 3 of the exercise):
+#   1. pretty_print function (printf + blank lines)
+#   2. OS detection through $OSTYPE
+#   3. python3 check / installation
+#   4. pip check
+#   5. Jupyter Notebook installation
+#   6. on macOS: `brew doctor`
 #
-# Bonus implémentés : couleurs ANSI, logging horodaté, strict mode,
-# options --dry-run / --verbose / --quiet / --uninstall / --help.
+# Implemented bonuses: ANSI colors, timestamped logging, strict mode,
+# --dry-run / --verbose / --quiet / --uninstall / --help options.
 # ---------------------------------------------------------------------------
 
-# Strict mode : stop à la première erreur, variables non définies interdites,
-# un pipeline échoue si une de ses commandes échoue.
+# Strict mode: stop on the first error, forbid unset variables,
+# make a pipeline fail if any of its commands fails.
 set -euo pipefail
 
 # ----------------------------- Configuration -------------------------------
@@ -25,23 +25,23 @@ VERBOSE=false
 QUIET=false
 UNINSTALL=false
 
-# Couleurs ANSI
+# ANSI colors
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
 RESET='\033[0m'
 
-# ------------------------------- Fonctions ----------------------------------
+# ------------------------------- Functions ----------------------------------
 
-# Écrit une ligne horodatée dans le fichier de log (audit trail).
+# Write a timestamped line to the log file (audit trail).
 log() {
     local level="$1"; shift
     printf '%s [%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$level" "$*" >> "$LOG_FILE"
 }
 
-# Feature 1 : affichage "joli" avec une ligne vide avant et après.
-# Usage : pretty_print "message" [info|success|warning|error]
+# Feature 1: "pretty" output with a blank line before and after.
+# Usage: pretty_print "message" [info|success|warning|error]
 pretty_print() {
     local message="$1"
     local level="${2:-info}"
@@ -55,14 +55,14 @@ pretty_print() {
 
     log "$(printf '%s' "$level" | tr '[:lower:]' '[:upper:]')" "$message"
 
-    # En mode quiet on n'affiche que les erreurs.
+    # In quiet mode, only errors are shown.
     if [[ "$QUIET" == true && "$level" != "error" ]]; then
         return 0
     fi
     printf '\n%b%s%b\n\n' "$color" "$message" "$RESET"
 }
 
-# Exécute une commande (ou l'affiche seulement en --dry-run) et logge le résultat.
+# Run a command (or only print it with --dry-run) and log the result.
 run() {
     log "CMD" "$*"
     if [[ "$DRY_RUN" == true ]]; then
@@ -77,7 +77,7 @@ run() {
     else
         local code=$?
         log "FAIL" "$* (exit $code)"
-        pretty_print "La commande a échoué : $*" error
+        pretty_print "Command failed: $*" error
         return "$code"
     fi
 }
@@ -88,13 +88,13 @@ command_exists() {
 
 usage() {
     cat <<EOF
-Usage : $(basename "$0") [options]
+Usage: $(basename "$0") [options]
 
-  -n, --dry-run    affiche les commandes sans les exécuter
-  -v, --verbose    affiche chaque commande exécutée
-  -q, --quiet      n'affiche que les erreurs
-  -u, --uninstall  désinstalle Jupyter (annule le script)
-  -h, --help       affiche cette aide
+  -n, --dry-run    print the commands without running them
+  -v, --verbose    print every command that is run
+  -q, --quiet      only print errors
+  -u, --uninstall  uninstall Jupyter (undo the script)
+  -h, --help       show this help
 EOF
 }
 
@@ -106,13 +106,13 @@ parse_args() {
             -q|--quiet)     QUIET=true ;;
             -u|--uninstall) UNINSTALL=true ;;
             -h|--help)      usage; exit 0 ;;
-            *) pretty_print "Option inconnue : $1" error; usage; exit 1 ;;
+            *) pretty_print "Unknown option: $1" error; usage; exit 1 ;;
         esac
         shift
     done
 }
 
-# Feature 2 : détection de l'OS grâce à la variable d'environnement OSTYPE.
+# Feature 2: detect the OS with the OSTYPE environment variable.
 detect_os() {
     case "${OSTYPE:-unknown}" in
         darwin*)            OS="macos" ;;
@@ -120,16 +120,16 @@ detect_os() {
         msys*|cygwin*)      OS="windows" ;;
         *)                  OS="unknown" ;;
     esac
-    pretty_print "Système détecté : $OS (OSTYPE=${OSTYPE:-?})"
+    pretty_print "Detected system: $OS (OSTYPE=${OSTYPE:-?})"
 }
 
-# Installe un paquet avec le gestionnaire de paquets adapté à l'OS.
+# Install a package with the package manager that matches the OS.
 install_package() {
     local package="$1"
     case "$OS" in
         macos)
             if ! command_exists brew; then
-                pretty_print "Homebrew est requis : https://brew.sh" error
+                pretty_print "Homebrew is required: https://brew.sh" error
                 return 1
             fi
             run brew install "$package"
@@ -143,23 +143,23 @@ install_package() {
             elif command_exists yum; then
                 run sudo yum install -y "$package"
             else
-                pretty_print "Aucun gestionnaire de paquets supporté trouvé" error
+                pretty_print "No supported package manager found" error
                 return 1
             fi
             ;;
         *)
-            pretty_print "OS non supporté pour l'installation automatique" error
+            pretty_print "OS not supported for automatic installation" error
             return 1
             ;;
     esac
 }
 
-# Feature 3 : python3 présent ? sinon on l'installe.
+# Feature 3: is python3 available? If not, install it.
 check_python() {
     if command_exists python3; then
-        pretty_print "Python déjà installé : $(python3 --version 2>&1)" success
+        pretty_print "Python already installed: $(python3 --version 2>&1)" success
     else
-        pretty_print "python3 introuvable, installation..." warning
+        pretty_print "python3 not found, installing..." warning
         if [[ "$OS" == "macos" ]]; then
             install_package python
         else
@@ -169,60 +169,60 @@ check_python() {
     fi
 }
 
-# Feature 4 : pip disponible ?
+# Feature 4: is pip available?
 check_pip() {
     if python3 -m pip --version >/dev/null 2>&1; then
-        pretty_print "pip installé : $(python3 -m pip --version)" success
+        pretty_print "pip installed: $(python3 -m pip --version)" success
     else
-        pretty_print "pip introuvable, tentative avec ensurepip..." warning
+        pretty_print "pip not found, trying ensurepip..." warning
         run python3 -m ensurepip --upgrade
     fi
 }
 
-# Feature 5 : installation de Jupyter Notebook (commande différente selon l'OS).
+# Feature 5: install Jupyter Notebook (the command depends on the OS).
 install_jupyter() {
     if command_exists jupyter; then
-        pretty_print "Jupyter déjà présent : $(jupyter --version 2>/dev/null | head -n 1)" success
+        pretty_print "Jupyter already installed: $(jupyter --version 2>/dev/null | head -n 1)" success
         return 0
     fi
-    pretty_print "Installation de Jupyter Notebook..."
+    pretty_print "Installing Jupyter Notebook..."
     case "$OS" in
         macos) install_package jupyterlab ;;
         linux) run python3 -m pip install --user notebook ;;
         *)     run python3 -m pip install notebook ;;
     esac
-    pretty_print "Jupyter installé ✔ (lancer avec : jupyter notebook)" success
+    pretty_print "Jupyter installed ✔ (start it with: jupyter notebook)" success
 }
 
-# Feature 6 : diagnostic Homebrew sur macOS.
+# Feature 6: Homebrew health check on macOS.
 brew_health_check() {
     if [[ "$OS" == "macos" ]] && command_exists brew; then
-        pretty_print "Diagnostic Homebrew (brew doctor)..."
-        # brew doctor renvoie un code != 0 dès qu'il y a un simple warning :
-        # on ne veut pas que le strict mode arrête le script pour ça.
+        pretty_print "Running Homebrew diagnostics (brew doctor)..."
+        # brew doctor exits non-zero on a mere warning:
+        # we don't want strict mode to stop the script because of it.
         if run brew doctor; then
-            pretty_print "Homebrew est en bonne santé" success
+            pretty_print "Homebrew is healthy" success
         else
-            pretty_print "brew doctor a signalé des avertissements (voir ci-dessus)" warning
+            pretty_print "brew doctor reported warnings (see above)" warning
         fi
     fi
 }
 
-# Bonus : annule l'installation de Jupyter.
+# Bonus: undo the Jupyter installation.
 uninstall() {
-    pretty_print "Désinstallation de Jupyter..." warning
+    pretty_print "Uninstalling Jupyter..." warning
     case "$OS" in
         macos) run brew uninstall jupyterlab || true ;;
         *)     run python3 -m pip uninstall -y notebook || true ;;
     esac
-    pretty_print "Désinstallation terminée" success
+    pretty_print "Uninstall complete" success
 }
 
 # --------------------------------- Main -------------------------------------
 main() {
     parse_args "$@"
     : > "$LOG_FILE" || true
-    pretty_print "=== Configuration de l'environnement de développement ==="
+    pretty_print "=== Development environment setup ==="
     detect_os
 
     if [[ "$UNINSTALL" == true ]]; then
@@ -234,7 +234,7 @@ main() {
     check_pip
     install_jupyter
     brew_health_check
-    pretty_print "Terminé ! Log : $LOG_FILE" success
+    pretty_print "Done! Log: $LOG_FILE" success
 }
 
 main "$@"

@@ -1,11 +1,10 @@
 # Exo 2 - ABCD Records 📼
 
-Énoncé : <https://gist.github.com/bdallard/2d2407c4de4c182afca6d3ec7235e9eb>
-Implémentation Python : [`abcd_records.py`](abcd_records.py)
+Exercise: <https://gist.github.com/bdallard/2d2407c4de4c182afca6d3ec7235e9eb>
+Python implementation: [`abcd_records.py`](abcd_records.py)
 
-> Mermaid n'a pas de vrai diagramme de cas d'utilisation : les use cases sont
-> représentés par des ovales (`([...])`), les acteurs par des nœuds 👤, et la
-> frontière du système par un `subgraph`.
+> Mermaid has no real use case diagram: use cases are drawn as ovals
+> (`([...])`), actors as 👤 nodes, and the system boundary as a `subgraph`.
 
 ## Level 1
 
@@ -51,13 +50,13 @@ classDiagram
         +verify_membership(person) bool
         +process_order(order)
     }
-    Member "1" --> "0..*" Order : passe
-    OrderProcessingClerk "1" --> "0..*" Order : traite
+    Member "1" --> "0..*" Order : places
+    OrderProcessingClerk "1" --> "0..*" Order : processes
 ```
 
 ## Level 2
 
-### Task 2.1 - Use case diagram complet
+### Task 2.1 - Complete use case diagram
 
 ```mermaid
 flowchart LR
@@ -80,7 +79,7 @@ flowchart LR
         MP([Make Payment])
     end
 
-    RM -.->|hérite de| M
+    RM -.->|inherits from| M
     M --- PO
     M --- MP
     NM --- PO
@@ -91,19 +90,19 @@ flowchart LR
     PR -.->|include| VIA
     PR -.->|include| PI
     PR -.->|include| PSL
-    SMA -.->|extend: non membre| VM
+    SMA -.->|extend: non-member| VM
     AD -.->|extend: Royal| PR
-    OUI -.->|extend: Royal + article indisponible| PR
+    OUI -.->|extend: Royal + item unavailable| PR
 ```
 
-- **include** (obligatoire) : passer commande implique *toujours* de vérifier
-  l'adhésion ; traiter une commande implique *toujours* de vérifier le stock,
-  d'imprimer la facture et la liste d'expédition.
-- **extend** (optionnel) : la remise et la commande d'articles indisponibles
-  n'ont lieu que pour un membre Royal ; le formulaire d'adhésion n'est envoyé
-  que si la vérification échoue.
+- **include** (mandatory): placing an order *always* involves verifying the
+  membership; processing an order *always* involves checking the stock and
+  printing the invoice and the shipping list.
+- **extend** (optional): the discount and ordering unavailable items only
+  happen for a Royal member; the membership application is only sent when
+  the verification fails.
 
-### Task 2.2 - Class diagram complet
+### Task 2.2 - Complete class diagram
 
 ```mermaid
 classDiagram
@@ -200,21 +199,21 @@ classDiagram
     Payment <|-- Check
     Payment <|-- BankDraft
 
-    Member "1" --> "0..*" Order : passe
+    Member "1" --> "0..*" Order : places
     Order "1" *-- "1..*" OrderLine
     OrderLine "0..*" --> "1" Item
     Order "1" *-- "0..1" Invoice
     Order "1" *-- "0..1" ShippingList
     Order "1" -- "0..1" Payment
-    NonMember "1" -- "0..1" MembershipApplication : reçoit
-    OrderProcessingClerk ..> Order : traite
-    CollectionDeptClerk ..> Payment : encaisse
+    NonMember "1" -- "0..1" MembershipApplication : receives
+    OrderProcessingClerk ..> Order : processes
+    CollectionDeptClerk ..> Payment : collects
     DailyRecords "1" o-- "0..*" Order
 ```
 
-#### Scénario : un membre Royal commande 2 CDs (dont un indisponible) et paie par chèque
+#### Scenario: a Royal member orders 2 CDs (one unavailable) and pays by check
 
-Diagramme d'objets (état après traitement) :
+Object diagram (state after processing):
 
 ```mermaid
 classDiagram
@@ -271,7 +270,7 @@ sequenceDiagram
     M->>OPC: place_order(items)
     OPC->>OPC: verify_membership(M)
     OPC->>O: create(member, items)
-    loop pour chaque article
+    loop for each item
         OPC->>INV: is_available(item, qty)
         INV-->>OPC: True / False
     end
@@ -284,7 +283,7 @@ sequenceDiagram
     OPC->>DR: save(order)
 ```
 
-### 2. Membership Verification (succès et échec)
+### 2. Membership Verification (success and failure)
 
 ```mermaid
 sequenceDiagram
@@ -294,17 +293,17 @@ sequenceDiagram
 
     P->>OPC: place_order(items)
     OPC->>DB: find_member(id)
-    alt membre trouvé
+    alt member found
         DB-->>OPC: Member
-        OPC-->>P: commande acceptée
-    else non membre
+        OPC-->>P: order accepted
+    else non-member
         DB-->>OPC: None
         OPC->>OPC: create MembershipApplication
         OPC-->>P: send_membership_application()
     end
 ```
 
-### 3. Payment Processing (tous les types)
+### 3. Payment Processing (all types)
 
 ```mermaid
 sequenceDiagram
@@ -316,7 +315,7 @@ sequenceDiagram
     M->>CDC: make_payment(order, payment)
     CDC->>PAY: process()
     alt Cash
-        PAY-->>CDC: encaissement immédiat
+        PAY-->>CDC: collected immediately
     else Check
         PAY->>BANK: deposit(check_number, amount)
         BANK-->>PAY: cleared
@@ -346,10 +345,10 @@ sequenceDiagram
     alt member.can_order_unavailable()
         OPC->>O: add_line(cd2, backordered=True)
         OPC->>SUP: reorder(cd2, qty)
-        SUP-->>INV: delivery (plus tard)
+        SUP-->>INV: delivery (later)
         INV-->>OPC: cd2 available
         OPC->>O: ship backordered line
     else Regular member
-        OPC-->>RM: article indisponible, refusé
+        OPC-->>RM: item unavailable, rejected
     end
 ```

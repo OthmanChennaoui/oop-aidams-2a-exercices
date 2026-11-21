@@ -1,7 +1,7 @@
-"""Use case e-commerce du cours « Introduction to testing in Python ».
+"""E-commerce use case from the "Introduction to testing in Python" course.
 
-- Domain layer : fonctions pures -> tests unitaires
-- Service / repository layer -> tests d'intégration
+- Domain layer: pure functions -> unit tests
+- Service / repository layer -> integration tests
 """
 
 # ==============================================
@@ -81,7 +81,7 @@ class OrderService:
 
 
 # ==============================================
-# Exemple AAA du cours : ShoppingCart
+# AAA example from the course: ShoppingCart
 # ==============================================
 
 

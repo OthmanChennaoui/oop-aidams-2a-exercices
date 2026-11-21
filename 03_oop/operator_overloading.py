@@ -1,6 +1,6 @@
 """OOP Problems - Operator Overloading.
 
-Énoncé : https://gist.github.com/bdallard/b2f2c910e3a9b564a30c86991c97b4fc
+Exercise: https://gist.github.com/bdallard/b2f2c910e3a9b564a30c86991c97b4fc
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ from functools import total_ordering
 
 
 # --------------------------------------------------------------------------
-# Problem 1 - Nombre complexe : + et -
+# Problem 1 - Complex number: + and -
 # --------------------------------------------------------------------------
 class Complex:
     def __init__(self, real: float, imag: float = 0.0) -> None:
@@ -38,7 +38,7 @@ class Complex:
 
 
 # --------------------------------------------------------------------------
-# Problem 2 - Person : > selon l'âge
+# Problem 2 - Person: > based on age
 # --------------------------------------------------------------------------
 class Person:
     def __init__(self, name: str, age: int, gender: str) -> None:
@@ -54,8 +54,8 @@ class Person:
 
 
 # --------------------------------------------------------------------------
-# Problem 4 - Vector : * = produit scalaire
-# (le gist n'a pas de Problem 3)
+# Problem 4 - Vector: * = dot product
+# (the gist has no Problem 3)
 # --------------------------------------------------------------------------
 class Vector:
     def __init__(self, x: float, y: float, z: float) -> None:
@@ -71,8 +71,8 @@ class Vector:
 
 
 # --------------------------------------------------------------------------
-# Problem 5 - Circle : tous les opérateurs de comparaison selon le rayon
-# (écrits à la main pour l'exercice ; functools.total_ordering ferait pareil)
+# Problem 5 - Circle: every comparison operator, based on the radius
+# (written by hand for the exercise; functools.total_ordering would do the same)
 # --------------------------------------------------------------------------
 class Circle:
     def __init__(self, radius: float) -> None:
@@ -110,7 +110,7 @@ class Circle:
 
 
 # --------------------------------------------------------------------------
-# Problem 6 - Point 2D comparé par distance euclidienne à l'origine
+# Problem 6 - 2D point compared by Euclidean distance from the origin
 # --------------------------------------------------------------------------
 @total_ordering
 class Point:
@@ -139,7 +139,7 @@ class Point:
 
 
 # --------------------------------------------------------------------------
-# Problem 7 - Multiplication de matrices
+# Problem 7 - Matrix multiplication
 # --------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Matrix:

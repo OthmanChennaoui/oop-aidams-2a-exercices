@@ -1,13 +1,13 @@
-"""Singleton - refactoring du gestionnaire de configuration.
+"""Singleton - refactoring the configuration manager.
 
-Problèmes du code legacy :
-  - config.json est relu à chaque appel (I/O inutile)
-  - pas d'état partagé : chaque module a sa propre copie
-  - une modification dans un module n'est pas vue par les autres
-  - difficile à mocker : pas de point d'entrée unique
+Problems with the legacy code:
+  - config.json is read again on every call (wasteful I/O)
+  - no shared state: each module has its own copy
+  - a change made in one module is not seen by the others
+  - hard to mock: there is no single access point
 
-Solution : ConfigManager charge le fichier une seule fois et renvoie toujours
-la même instance via get_instance(). get("a.b") lit les valeurs imbriquées.
+Solution: ConfigManager loads the file only once and always returns the same
+instance through get_instance(). get("a.b") reads nested values.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ class ConfigManager:
     _lock = threading.Lock()
 
     def __init__(self, path: Path | str = DEFAULT_CONFIG_PATH) -> None:
-        # On interdit l'instanciation directe pour garantir l'unicité.
+        # Direct instantiation is forbidden to guarantee uniqueness.
         if ConfigManager._instance is not None:
             raise RuntimeError("Use ConfigManager.get_instance()")
         self.path = Path(path)
@@ -36,7 +36,7 @@ class ConfigManager:
 
     @classmethod
     def get_instance(cls, path: Path | str = DEFAULT_CONFIG_PATH) -> ConfigManager:
-        # Double-checked locking : thread-safe sans verrouiller à chaque appel.
+        # Double-checked locking: thread-safe without locking on every call.
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
@@ -45,7 +45,7 @@ class ConfigManager:
 
     @classmethod
     def reset(cls) -> None:
-        """Utile pour les tests : oublie l'instance courante."""
+        """Useful for tests: forget the current instance."""
         cls._instance = None
 
     def _load(self) -> None:
@@ -54,7 +54,7 @@ class ConfigManager:
         self.load_count += 1
 
     def get(self, key: str, default: Any = _MISSING) -> Any:
-        """Accès par chemin pointé : get("database.host")."""
+        """Dotted-path access: get("database.host")."""
         node: Any = self._data
         for part in key.split("."):
             if isinstance(node, dict) and part in node:
@@ -66,7 +66,7 @@ class ConfigManager:
         return node
 
     def set(self, key: str, value: Any) -> None:
-        """Modifie une valeur : tous les modules la voient (état partagé)."""
+        """Change a value: every module sees it (shared state)."""
         *parents, last = key.split(".")
         node = self._data
         for part in parents:
@@ -74,7 +74,7 @@ class ConfigManager:
         node[last] = value
 
 
-# ----- Le code applicatif refactoré : plus aucun load_config() -----------
+# ----- Refactored application code: no more load_config() -------------
 def start_application() -> str:
     config = ConfigManager.get_instance()
     return f"Starting {config.get('app.name')} (debug={config.get('app.debug')})"

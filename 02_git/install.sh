@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script de la Part 7 du Git mini exo : met à jour les paquets et installe htop.
+# Script from Part 7 of the Git mini exo: updates the package lists and installs htop.
 set -euo pipefail
 
 echo "Starting installation..."

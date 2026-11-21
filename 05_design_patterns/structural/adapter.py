@@ -1,14 +1,14 @@
-"""Adapter - brancher le générateur de rapports XML legacy sur le dashboard JSON.
+"""Adapter - plugging the legacy XML report generator into the JSON dashboard.
 
-Problèmes du code legacy :
-  - interfaces incompatibles : le legacy renvoie du XML, le dashboard attend du JSON
-  - logique de conversion répétée dans chaque fonction (et en trichant : on
-    re-sérialise les données d'origine au lieu de convertir la sortie XML)
-  - LegacyReportGenerator est une lib externe : on ne peut pas la modifier
-  - couplage fort entre logique métier et conversion de format
+Problems with the legacy code:
+  - incompatible interfaces: the legacy system returns XML, the dashboard expects JSON
+  - conversion logic repeated in every function (and cheating: it re-serialises
+    the original data instead of converting the XML output)
+  - LegacyReportGenerator is an external library: it cannot be modified
+  - tight coupling between business logic and format conversion
 
-Solution : LegacyReportAdapter implémente ReportGeneratorInterface, enveloppe
-le legacy et convertit *réellement* son XML en JSON.
+Solution: LegacyReportAdapter implements ReportGeneratorInterface, wraps the
+legacy generator and *really* converts its XML into JSON.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
 
 
-# --------------------------------------------- code existant (intouchable) --
+# ---------------------------------------- existing code (cannot change) --
 class LegacyReportGenerator:
     def generate_report(self, data: dict) -> str:
         """Returns XML format - old system"""
@@ -40,7 +40,7 @@ class AnalyticsDashboard:
 
 # ------------------------------------------------------------- Adapter -----
 class ReportGeneratorInterface(ABC):
-    """L'interface attendue par le nouveau code : renvoie du JSON."""
+    """The interface expected by the new code: returns JSON."""
 
     @abstractmethod
     def generate(self, data: dict) -> str: ...
@@ -48,7 +48,7 @@ class ReportGeneratorInterface(ABC):
 
 class LegacyReportAdapter(ReportGeneratorInterface):
     def __init__(self, legacy: LegacyReportGenerator) -> None:
-        self._legacy = legacy  # composition : on enveloppe, on n'hérite pas
+        self._legacy = legacy  # composition: we wrap, we don't inherit
 
     def generate(self, data: dict) -> str:
         xml_report = self._legacy.generate_report(data)
@@ -61,7 +61,7 @@ class LegacyReportAdapter(ReportGeneratorInterface):
 
     @staticmethod
     def _parse_value(text: str | None) -> int | float | str | None:
-        """Le XML perd les types : on retrouve int / float quand c'est possible."""
+        """XML loses the types: recover int / float when possible."""
         if text is None:
             return None
         for cast in (int, float):
@@ -72,7 +72,7 @@ class LegacyReportAdapter(ReportGeneratorInterface):
         return text
 
 
-# --------------------------------------- code métier, désormais découplé ---
+# ------------------------------------ business code, now decoupled ---
 def show_report(generator: ReportGeneratorInterface, dashboard: AnalyticsDashboard, data: dict) -> str:
     return dashboard.display(generator.generate(data))
 

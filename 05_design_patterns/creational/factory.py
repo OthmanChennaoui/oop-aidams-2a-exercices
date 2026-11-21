@@ -1,13 +1,13 @@
-"""Factory Method - refactoring du système de paiement.
+"""Factory Method - refactoring the payment system.
 
-Problème du code legacy : un seul `process_payment` avec une chaîne if/elif.
-Ajouter un moyen de paiement oblige à modifier cette fonction (violation de
-l'Open/Closed Principle) et tout est testé d'un bloc.
+Problem with the legacy code: a single `process_payment` with an if/elif chain.
+Adding a payment method means modifying that function (violates the
+Open/Closed Principle) and everything can only be tested as one block.
 
-Solution :
-  - PaymentProcessor (ABC) : le contrat validate() / process()
-  - une classe concrète par moyen de paiement
-  - PaymentFactory : un dictionnaire str -> classe, extensible via register()
+Solution:
+  - PaymentProcessor (ABC): the validate() / process() contract
+  - one concrete class per payment method
+  - PaymentFactory: a str -> class dictionary, extensible through register()
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from abc import ABC, abstractmethod
 
 
 class PaymentProcessor(ABC):
-    """Interface commune à tous les processeurs de paiement."""
+    """Common interface for every payment processor."""
 
     method: str = ""
     error_message: str = "Invalid payment details"
@@ -28,7 +28,7 @@ class PaymentProcessor(ABC):
     def compute_fee(self, amount: float) -> float: ...
 
     def process(self, amount: float, details: dict) -> dict:
-        # Squelette commun : valider, calculer les frais, renvoyer le résultat.
+        # Shared skeleton: validate, compute the fee, return the result.
         if not self.validate(details):
             return {"success": False, "error": self.error_message}
         fee = self.compute_fee(amount)
@@ -73,7 +73,7 @@ class PayPalProcessor(PaymentProcessor):
 
 
 class PaymentFactory:
-    """Associe un nom de moyen de paiement à sa classe — sans if/elif."""
+    """Maps a payment method name to its class - no if/elif."""
 
     _processors: dict[str, type[PaymentProcessor]] = {
         "credit_card": CreditCardProcessor,
@@ -83,7 +83,7 @@ class PaymentFactory:
 
     @classmethod
     def register(cls, name: str, processor: type[PaymentProcessor]) -> None:
-        """Ajouter Apple Pay, Crypto... sans toucher au code existant."""
+        """Add Apple Pay, Crypto... without touching the existing code."""
         cls._processors[name] = processor
 
     def get_processor(self, payment_type: str) -> PaymentProcessor:
@@ -93,7 +93,7 @@ class PaymentFactory:
             raise ValueError(f"Unknown payment type: {payment_type}") from None
 
 
-# Exemple d'extension : un nouveau moyen de paiement, zéro modification ailleurs.
+# Extension example: a new payment method, zero changes anywhere else.
 class ApplePayProcessor(PaymentProcessor):
     method = "apple_pay"
     error_message = "Invalid Apple Pay token"

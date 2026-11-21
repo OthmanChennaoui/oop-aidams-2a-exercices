@@ -1,15 +1,15 @@
-"""Decorator - refactoring du calcul de prix des commandes.
+"""Decorator - refactoring the order pricing system.
 
-Problèmes du code legacy :
-  - explosion de flags booléens : chaque option = un paramètre de plus
-  - une seule méthode fait tout (viole le Single Responsibility Principle)
-  - ajouter une option = modifier calculate_total (viole Open/Closed)
-  - la logique d'une option (ex. assurance) n'est pas réutilisable
-  - l'ordre des opérations est implicite (remise avant ou après livraison ?)
+Problems with the legacy code:
+  - boolean flag explosion: every option = one more parameter
+  - a single method does everything (violates the Single Responsibility Principle)
+  - adding an option = modifying calculate_total (violates Open/Closed)
+  - the logic of an option (e.g. insurance) cannot be reused
+  - the order of operations is implicit (discount before or after shipping?)
 
-Solution : chaque option est un décorateur qui enveloppe un OrderComponent,
-ajoute son coût / sa description et délègue le reste à l'objet enveloppé.
-L'ordre d'application est explicite : c'est l'ordre d'empilement.
+Solution: each option is a decorator that wraps an OrderComponent, adds its
+own cost / description and delegates the rest to the wrapped object.
+The order of application is explicit: it is the stacking order.
 """
 
 from __future__ import annotations
@@ -39,10 +39,10 @@ class BaseOrder(OrderComponent):
 
 
 class OrderDecorator(OrderComponent):
-    """Décorateur de base : délègue tout à la commande enveloppée."""
+    """Base decorator: delegates everything to the wrapped order."""
 
     def __init__(self, order: OrderComponent) -> None:
-        self._order = order  # protected, comme conseillé dans le cours
+        self._order = order  # protected, as recommended in the course
 
     def get_cost(self) -> float:
         return self._order.get_cost()
@@ -52,7 +52,7 @@ class OrderDecorator(OrderComponent):
 
     @property
     def base_price(self) -> float:
-        """Remonte jusqu'à la BaseOrder (l'assurance se calcule sur le prix de base)."""
+        """Walk down to the BaseOrder (insurance is computed on the base price)."""
         return self._order.base_price  # type: ignore[attr-defined]
 
 
@@ -90,7 +90,7 @@ class GiftWrapDecorator(OrderDecorator):
 
 
 class DiscountDecorator(OrderDecorator):
-    """Remise en % sur le total *accumulé jusqu'ici*."""
+    """Percentage discount on the total *accumulated so far*."""
 
     def __init__(self, order: OrderComponent, percent: float) -> None:
         super().__init__(order)
@@ -109,7 +109,7 @@ class DiscountDecorator(OrderDecorator):
 
 
 class PremiumMemberDecorator(DiscountDecorator):
-    """Un membre premium, c'est une remise de 10 % : on réutilise DiscountDecorator."""
+    """A premium member is a 10% discount: we reuse DiscountDecorator."""
 
     def __init__(self, order: OrderComponent) -> None:
         super().__init__(order, percent=10)

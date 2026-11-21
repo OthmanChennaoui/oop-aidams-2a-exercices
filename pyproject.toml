@@ -1,13 +1,13 @@
 [project]
 name = "oop-aidams-2a-exercices"
 version = "1.0.0"
-description = "Exercices du cours OOP & Design patterns in Python (AIDAMS 2A)"
+description = "Exercises for the OOP & Design patterns in Python course (AIDAMS 2A)"
 requires-python = ">=3.10"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# Les dossiers d'exercices commencent par un chiffre : ce ne sont pas des
-# packages importables, on les ajoute donc directement au sys.path.
+# The exercise folders start with a digit: they are not importable
+# packages, so they are added to sys.path directly.
 pythonpath = [
     "03_oop",
     "04_uml",
@@ -18,7 +18,7 @@ pythonpath = [
 ]
 addopts = "-m 'not slow'"
 markers = [
-    "slow: tests lents / appels réseau réels (pytest -m slow)",
+    "slow: slow tests / real network calls (pytest -m slow)",
 ]
 
 [tool.coverage.run]

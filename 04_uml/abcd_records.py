@@ -1,6 +1,6 @@
-"""Exo 2 - ABCD Records : implémentation du diagramme de classes (Task 2.2).
+"""Exo 2 - ABCD Records: implementation of the class diagram (Task 2.2).
 
-Scénario demandé : un membre Royal commande 2 CDs (un indisponible) et paie par chèque.
+Required scenario: a Royal member orders 2 CDs (one unavailable) and pays by check.
 """
 
 from __future__ import annotations
@@ -191,7 +191,7 @@ class OrderProcessingClerk:
         return isinstance(person, Member)
 
     def handle_request(self, person: Member | NonMember) -> MembershipApplication | None:
-        """Non-membres : on leur envoie un formulaire d'adhésion."""
+        """Non-members are sent a membership application form."""
         if self.verify_membership(person):
             return None
         assert isinstance(person, NonMember)
@@ -206,9 +206,9 @@ class OrderProcessingClerk:
                 shippable.append(line)
                 kept.append(line)
             elif order.member.can_order_unavailable():
-                line.backordered = True  # sera commandé auprès du fournisseur
+                line.backordered = True  # will be reordered from the supplier
                 kept.append(line)
-            # sinon (membre Regular) : la ligne est refusée
+            # otherwise (Regular member): the line is rejected
         order.lines = kept
         order.invoice = Invoice(order.order_id, order.total())
         order.shipping_list = ShippingList(shippable)

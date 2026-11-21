@@ -1,4 +1,4 @@
-"""Mocking : on remplace le vrai client Groq par un faux, rapide et gratuit."""
+"""Mocking: replace the real Groq client with a fake one that is fast and free."""
 
 import os
 
@@ -41,6 +41,6 @@ def test_ask_groq_rejects_empty_question(question, fake_groq_client):
 @pytest.mark.slow
 @pytest.mark.skipif(not os.getenv("GROQ_API_KEY"), reason="GROQ_API_KEY not set")
 def test_ask_groq_real_api():
-    """Vrai appel réseau : lancé seulement avec `pytest -m slow`."""
+    """Real network call: only run with `pytest -m slow`."""
     pytest.importorskip("groq")
     assert "4" in ask_groq("What is 2+2? Answer with a single digit.")

@@ -1,19 +1,19 @@
-"""Template Method - refactoring des pipelines ETL.
+"""Template Method - refactoring the ETL pipelines.
 
-Problèmes identifiés dans le code legacy :
-  1. La validation est recopiée 3 fois (seuls les champs requis changent).
-  2. Le cleanup et le load sont recopiés 3 fois à l'identique.
-  3. Ajouter du logging à tous les pipelines = modifier 3 classes.
-  4. Si l'ordre du workflow change, il faut le changer partout (et on peut
-     oublier une étape dans un pipeline).
-  5. ~80 % du code des trois classes est dupliqué.
+Problems found in the legacy code:
+  1. Validation is copied 3 times (only the required fields change).
+  2. Cleanup and load are copied 3 times, identically.
+  3. Adding logging to every pipeline = modifying 3 classes.
+  4. If the workflow order changes, it must be changed everywhere (and a step
+     can be forgotten in one pipeline).
+  5. ~80% of the code of the three classes is duplicated.
 
-Solution :
-  - DataPipeline (ABC) : run() est la *template method*, elle fixe l'ordre
+Solution:
+  - DataPipeline (ABC): run() is the *template method*, it fixes the order
     connect -> extract -> transform -> validate -> load -> cleanup
-  - étapes abstraites : connect, extract, transform (ce qui change)
-  - étapes communes : validate, load, cleanup (écrites une seule fois)
-  - hooks optionnels : before_run / after_run / on_error
+  - abstract steps: connect, extract, transform (what changes)
+  - shared steps: validate, load, cleanup (written only once)
+  - optional hooks: before_run / after_run / on_error
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 class DataPipeline(ABC):
     name: str = "Generic"
     required_fields: tuple[str, ...] = ()
-    io_delay: float = 0.5  # simulation de latence ; mis à 0 dans les tests
+    io_delay: float = 0.5  # simulated latency; set to 0 in the tests
 
     def __init__(self, source: str) -> None:
         self.source = source
@@ -35,7 +35,7 @@ class DataPipeline(ABC):
 
     # ---------------------------------------------------- template method --
     def run(self) -> str:
-        """Le squelette de l'algorithme : les sous-classes ne le redéfinissent pas."""
+        """The skeleton of the algorithm: subclasses do not override it."""
         self.before_run()
         try:
             self.connect()
@@ -53,7 +53,7 @@ class DataPipeline(ABC):
         self.after_run()
         return f"{self.name} Pipeline finished"
 
-    # ---------------------------------------- étapes propres à chaque source
+    # ------------------------------------- steps specific to each source
     @abstractmethod
     def connect(self) -> None: ...
 
@@ -63,7 +63,7 @@ class DataPipeline(ABC):
     @abstractmethod
     def transform(self, data: list[dict]) -> list[dict]: ...
 
-    # ------------------------------------------------- étapes communes ----
+    # ---------------------------------------------------- shared steps ----
     def validate(self, data: list[dict]) -> None:
         self._say("Validating data...")
         for record in data:
@@ -83,17 +83,17 @@ class DataPipeline(ABC):
 
     # ------------------------------------------------------------ hooks ----
     def before_run(self) -> None:
-        """Hook optionnel."""
+        """Optional hook."""
 
     def after_run(self) -> None:
-        """Hook optionnel."""
+        """Optional hook."""
 
     def on_error(self, exc: Exception) -> None:
         self._say(f"Pipeline failed: {exc}")
 
     # ----------------------------------------------------------- helpers --
     def _say(self, message: str) -> None:
-        # Un seul endroit pour ajouter du logging à TOUS les pipelines.
+        # A single place to add logging to ALL pipelines.
         self.log.append(message)
         print(message)
 
@@ -162,7 +162,7 @@ class DatabasePipeline(DataPipeline):
         return out
 
 
-# Validation de la solution : nouveau pipeline XML, rien d'autre à modifier.
+# Validating the solution: a new XML pipeline, nothing else to change.
 class XMLPipeline(DataPipeline):
     name = "XML"
     required_fields = ("order_id", "amount")
